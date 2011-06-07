@@ -210,7 +210,7 @@ i=i+1
 return(list(m=rowMeans(cbind(u1,u2)),P1=u1,P2=u2,P1se=errs[1:(P-1)],P2se=errs[P:(2*(P-1))],iterations=i,value=z1$value))
 }
 
-BEAPFrOG<-function(data,p,nchains=1,iterations=1000,alpha=0.05,prior=1,burn=2000){
+BEAPFrOG<-function(data,p,nchains=1,iterations=1000,alpha=0.05,prior=1,burn=2000,SampSizes){
 	#data is a vector of major allele counts, length equal to number of SNPs
 	#p is a matrix of allele frequencies, with number of columns equal to the number of populations and number of rows equal to the number of SNPs
 	#nchains is the number of markov chains	#iterations is the number of post-burn MCMC samples
@@ -234,7 +234,11 @@ nSNP=length(data2)
 fadmix="model {\nfor (i in 1:N){\nG[i]~dcat(probs[i,])\np1[i]<-sum(m1[1:(J-1)]*p[i,1:(J-1)])+(1-sum(m1[1:(J-1)]))*p[i,J]\np2[i]<-sum(m2[1:(J-1)]*p[i,1:(J-1)])+(1-sum(m2[1:(J-1)]))*p[i,J]\nprobs[i,1]<-(1-p1[i])*(1-p2[i])\nprobs[i,2]<-p1[i]*(1-p2[i])+p2[i]*(1-p1[i])\nprobs[i,3]<-p1[i]*p2[i]\nfor(j in 1:J){\np[i,j]~dnorm(pE[i,j],pT[i,j])T(0,1)\n}\n}\nfor(x in 1:J){\nalpha[x]<-prior\n}\nm1~ddirch(alpha)\nm2~ddirch(alpha)\n}\n" 
 write(fadmix,file="BEAPFrOG.bug")
 #jags model
-JagsModel <- jags.model('BEAPFrOG.bug',data = list('G'=data2+1,'N'=nSNP,'J'=P,'pE'=p2,'pT'=1/(p2*(1-p2)),'prior'=prior),n.chains = nchains,n.adapt = burn)
+tau=matrix(ncol=P,nrow=nSNP)
+for(j in 1:P){
+tau[,j]=nsamp/(p2[,j]*(1-p2[,j]))
+}
+JagsModel <- jags.model('BEAPFrOG.bug',data = list('G'=data2+1,'N'=nSNP,'J'=P,'pE'=p2,'pT'=tau,'prior'=prior),n.chains = nchains,n.adapt = burn)
 z1=coda.samples(JagsModel,c('m1','m2'),iterations)
 #Process samples to get credible intervals
 cred.intervals=matrix(nrow=2*P,ncol=2)
@@ -267,7 +271,6 @@ colnames(P1i)=c("Lower_Interval","Upper_Interval")
 colnames(P2i)=c("Lower_Interval","Upper_Interval")
 return(list(P1est=modes[1:P],P2est=modes[(P+1):(2*P)],P1interval=P1i,P2interval=P2i,Monitor=z1))
 }
-
 
 constrOptim2 <- function (theta, f, grad, ui, ci, mu = 1e-04, control = list(), 
     method = if (is.null(grad)) "Nelder-Mead" else "BFGS", outer.iterations = 100, 

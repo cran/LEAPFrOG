@@ -3,7 +3,7 @@
 \title{Bayesian Estimation of Admixture in Parental From Offspring Genotype}
 \description{Provides estimates of admixture proportions in offspring and ungenotyped parents, using genotype data}
 \usage{
-BEAPFrOG(data,p,nchains=1,iterations=1000,alpha=0.05,prior=1,burn=2000)
+BEAPFrOG(data,p,nchains=1,iterations=1000,alpha=0.05,prior=1,burn=2000,SampSizes)
 }
 \arguments{
 \item{data}{Vector of  allele counts: each element either 0,1,2 or NA. }
@@ -12,7 +12,8 @@ BEAPFrOG(data,p,nchains=1,iterations=1000,alpha=0.05,prior=1,burn=2000)
 \item{iterations}{Number of samples for each Markov Chain}
 \item{alpha}{1 minus the width of credible interval taken around the posterior mode.}
 \item{prior}{Concentration parameter for the dirichlet distribution. 1 is uninformative, small values suggest first-generation admixture (uninformative as to which source populations involved), and higher values suggest low parental divergence.}
-\item{burn}{Burn- in period. The number of MCMC samples to discard.} 
+\item{burn}{Burn- in period. The number of MCMC samples to discard.}
+\item{SampSizes}{Vector of the same length as the number of source populations. Each element is the number of individuals used to calculate allele frequencies in that population. Parameterises the prior on allele frequencies.}  
 }
 \value{
 A  list including elements
