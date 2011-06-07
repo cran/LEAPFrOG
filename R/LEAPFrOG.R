@@ -236,7 +236,7 @@ write(fadmix,file="BEAPFrOG.bug")
 #jags model
 tau=matrix(ncol=P,nrow=nSNP)
 for(j in 1:P){
-tau[,j]=(2*nsamp)/(p2[,j]*(1-p2[,j]))
+tau[,j]=(2*SampSizes[j])/(p2[,j]*(1-p2[,j]))
 }
 JagsModel <- jags.model('BEAPFrOG.bug',data = list('G'=data2+1,'N'=nSNP,'J'=P,'pE'=p2,'pT'=tau,'prior'=prior),n.chains = nchains,n.adapt = burn)
 z1=coda.samples(JagsModel,c('m1','m2'),iterations)
