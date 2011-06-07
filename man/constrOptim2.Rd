@@ -63,8 +63,11 @@ constrOptim2(theta, f, grad, ui, ci, mu = 1e-04, control = list(), method = if (
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
-}
+Ravi Varadhan, Ph.D.
+Assistant Professor,
+Division of Geriatric Medicine and Gerontology
+School of Medicine
+Johns Hopkins University}
 \note{
 %%  ~~further notes~~
 }

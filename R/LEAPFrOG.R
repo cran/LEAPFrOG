@@ -92,7 +92,8 @@ D=m[P:length(m)]
 		m=m[1:(P-1)]
 mins=vector(length=(2*P)-2);maxs=mins
 mins[1:(P-1)]=m
-mins[P:length(mins)]=c(D[1]-0.5,D[2:(P-1)])
+mins[P]=D[1]-0.5
+if(P>2)mins[2:length(mins)]=D[2:(P-1)]
 maxs[1:(P-1)]=1-m
 maxs[P:length(mins)]=1-D
 maxs2=c(1-sum(m),0.5-(sum(D[m<=0.5]*m[m<=0.5])+sum(D[m>0.5]*(1-m[m>0.5]))+sum(m[m>0.5]-0.5)),0.5-(sum((1-D[m<=0.5])*m[m<=0.5])+sum((1-D[m>0.5])*(1-m[m>0.5]))+sum(m[m>0.5]-0.5)))
