@@ -236,7 +236,7 @@ write(fadmix,file="BEAPFrOG.bug")
 #jags model
 tau=matrix(ncol=P,nrow=nSNP)
 for(j in 1:P){
-tau[,j]=nsamp/(p2[,j]*(1-p2[,j]))
+tau[,j]=(2*nsamp)/(p2[,j]*(1-p2[,j]))
 }
 JagsModel <- jags.model('BEAPFrOG.bug',data = list('G'=data2+1,'N'=nSNP,'J'=P,'pE'=p2,'pT'=tau,'prior'=prior),n.chains = nchains,n.adapt = burn)
 z1=coda.samples(JagsModel,c('m1','m2'),iterations)
@@ -271,6 +271,7 @@ colnames(P1i)=c("Lower_Interval","Upper_Interval")
 colnames(P2i)=c("Lower_Interval","Upper_Interval")
 return(list(P1est=modes[1:P],P2est=modes[(P+1):(2*P)],P1interval=P1i,P2interval=P2i,Monitor=z1))
 }
+
 
 constrOptim2 <- function (theta, f, grad, ui, ci, mu = 1e-04, control = list(), 
     method = if (is.null(grad)) "Nelder-Mead" else "BFGS", outer.iterations = 100, 
