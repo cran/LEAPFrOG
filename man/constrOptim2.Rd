@@ -2,10 +2,9 @@
 \alias{constrOptim2}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-constrOptim2
-}
+constrOptim2}
 \description{
-Called by LEAPFrOG. Constrained optimisation with hessian matrix returned. 
+Called by LEAPFrOG and LEAPFrOG EM. Allows non-linearly constrained optimisation with hessian matrix returned
 }
 \usage{
 constrOptim2(theta, f, grad, ui, ci, mu = 1e-04, control = list(), method = if (is.null(grad)) "Nelder-Mead" else "BFGS", outer.iterations = 100, outer.eps = 1e-05, hessian = FALSE, ...)
@@ -49,33 +48,8 @@ constrOptim2(theta, f, grad, ui, ci, mu = 1e-04, control = list(), method = if (
 %%     ~~Describe \code{\dots} here~~
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
-Ravi Varadhan, Ph.D.
-Assistant Professor,
-Division of Geriatric Medicine and Gerontology
-School of Medicine
-Johns Hopkins University}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+Ravi Varadhan
 }
 \examples{
 ##---- Should be DIRECTLY executable !! ----
@@ -157,3 +131,4 @@ function (theta, f, grad, ui, ci, mu = 1e-04, control = list(),
 % R documentation directory.
 \keyword{ ~kwd1 }
 \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

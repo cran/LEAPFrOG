@@ -29,5 +29,5 @@ Maintainer: Daniel Crouch - daniel.crouch@kcl.ac.uk
 \references{
 Crouch & Weale (2011)
 }
-\seealso{\code{\link[LEAPFrOG:LEAPFrOG_plot]{LEAPFrOG_plot}},\code{\link[LEAPFrOG:LEAPFrOG_EM]{LEAPFrOG_EM}},\code{\link[LEAPFrOG:LEAPFrOG]{LEAPFrOG}}
+\seealso{\code{\link[LEAPFrOG:LEAPFrOG_plot]{LEAPFrOG_plot}},\code{\link[LEAPFrOG:LEAPFrOG_EM]{LEAPFrOG_EM}},\code{\link[LEAPFrOG:LEAPFrOG]{LEAPFrOG}},\code{\link[LEAPFrOG:BEAPFrOG]{BEAPFrOG}}
 }

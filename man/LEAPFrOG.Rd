@@ -31,5 +31,5 @@ Standard errors returned in the order P-1 m parameters followed by P-1 D paramet
 library(LEAPFrOG)
 z1=LEAPFrOG(sample(0:2,10000,replace=TRUE),cbind(runif(10000,0,1),runif(10000,0,1)))
 z1}
-\seealso{\code{\link[LEAPFrOG:LEAPFrOG_plot]{LEAPFrOG_plot}},\code{\link[LEAPFrOG:LEAPFrOG_EM]{LEAPFrOG_EM}}
+\seealso{\code{\link[LEAPFrOG:LEAPFrOG_plot]{LEAPFrOG_plot}},\code{\link[LEAPFrOG:LEAPFrOG_EM]{LEAPFrOG_EM}},\code{\link[LEAPFrOG:BEAPFrOG]{BEAPFrOG}}
 }

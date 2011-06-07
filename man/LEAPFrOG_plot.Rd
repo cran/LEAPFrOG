@@ -27,5 +27,5 @@ LEAPFrOG_plot(Results,PopNames=c("PopA","PopB"))
 #With sample names:
 LEAPFrOG_plot(Results,PopNames=c("PopA","PopB"),SampNames=c("Hair","Blood","Door Handle","Ballroom","Lead Piping","Briefcase","Toothbrush","Sock","Shirt","Skin"))
 }
-\seealso{\code{\link[LEAPFrOG:LEAPFrOG]{LEAPFrOG}},\code{\link[LEAPFrOG:LEAPFrOG_EM]{LEAPFrOG_EM}}
+\seealso{\code{\link[LEAPFrOG:LEAPFrOG]{LEAPFrOG}},\code{\link[LEAPFrOG:LEAPFrOG_EM]{LEAPFrOG_EM}},\code{\link[LEAPFrOG:BEAPFrOG]{BEAPFrOG}}
 }

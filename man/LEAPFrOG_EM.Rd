@@ -25,5 +25,6 @@ A  list including elements
 LEAPFrOG_EM requires python to be installed. Only the parental admixture proportions are estimated directly (all except the last population), and therefore standard errors are only reported for these only. 
 }
 \author{Daniel Crouch & Michael Weale, Department of Medical and Molecular Genetics, King's College London}
-\seealso{\code{\link[LEAPFrOG:LEAPFrOG]{LEAPFrOG}},\code{\link[LEAPFrOG:LEAPFrOG_plot]{LEAPFrOG_plot}}
+\seealso{\code{\link[LEAPFrOG:LEAPFrOG]{LEAPFrOG}},\code{\link[LEAPFrOG:LEAPFrOG_plot]{LEAPFrOG_plot}},\code{\link[LEAPFrOG:BEAPFrOG]{BEAPFrOG}}
 }
+

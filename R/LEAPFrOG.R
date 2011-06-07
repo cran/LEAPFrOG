@@ -210,6 +210,65 @@ i=i+1
 return(list(m=rowMeans(cbind(u1,u2)),P1=u1,P2=u2,P1se=errs[1:(P-1)],P2se=errs[P:(2*(P-1))],iterations=i,value=z1$value))
 }
 
+BEAPFrOG<-function(data,p,nchains=1,iterations=1000,alpha=0.05,prior=1,burn=2000){
+	#data is a vector of major allele counts, length equal to number of SNPs
+	#p is a matrix of allele frequencies, with number of columns equal to the number of populations and number of rows equal to the number of SNPs
+	#nchains is the number of markov chains	#iterations is the number of post-burn MCMC samples
+	#alpha is 1-the width of the credible interval
+	#prior is the concentration parameter of the dirichlet prior. 1 is 'flat' and uninformative. Low values imply first generation admixture, but with no knowledge as to between which population if there are more than 2 populations. Therefore it is more informative (particularly when there are only 2 populations). Values greater than 1 imply even admixture between all populations in each parent, and are therefore informative.
+	#burn is the number of MCMC iterations to throw away
+	packageLoaded <- function(name) 0 != length(grep(paste("^package:", name,
+"$", sep=""), search())) #Stole this from https://stat.ethz.ch/pipermail/r-help/2005-September/078952.html
+if(!packageLoaded("rjags")) library(rjags)
+P<<-dim(as.matrix(p))[2]	#Number of pops
+if(P<2) return(print("Error: LEORAH requires 2 or more reference populations"))
+if(length(data)!=dim(as.matrix(p))[1]) return("Error: Number of SNPs in data and reference frequencies is not the same")		
+#Strip missing data or fixed SNPs from genotype and allele frequency matrix
+data2=data[!is.na(data)]
+p2=p[!is.na(data),]
+data2=data2[rowSums(p2)<P]
+p2=p2[rowSums(p2)<P,]
+data2=data2[rowSums(p2)>0]
+p2=p2[rowSums(p2)>0,]
+nSNP=length(data2)
+fadmix="model {\nfor (i in 1:N){\nG[i]~dcat(probs[i,])\np1[i]<-sum(m1[1:(J-1)]*p[i,1:(J-1)])+(1-sum(m1[1:(J-1)]))*p[i,J]\np2[i]<-sum(m2[1:(J-1)]*p[i,1:(J-1)])+(1-sum(m2[1:(J-1)]))*p[i,J]\nprobs[i,1]<-(1-p1[i])*(1-p2[i])\nprobs[i,2]<-p1[i]*(1-p2[i])+p2[i]*(1-p1[i])\nprobs[i,3]<-p1[i]*p2[i]\n}\nfor(x in 1:J){\nalpha[x]<-prior\n}\nm1~ddirch(alpha)\nm2~ddirch(alpha)\n}\n" 
+write(fadmix,file="BEAPFrOG.bug")
+#jags model
+JagsModel <- jags.model('BEAPFrOG.bug',data = list('G'=data2+1,'N'=nSNP,'J'=P,'p'=p2,'prior'=prior),n.chains = nchains,n.adapt = burn)
+z1=coda.samples(JagsModel,c('m1','m2'),iterations)
+#Process samples to get credible intervals
+cred.intervals=matrix(nrow=2*P,ncol=2)
+modes=vector(length=2*P)
+z2=as.matrix(z1[[1]])
+#Flip symmetric results
+flip=z2[,1]<0.5
+p2flip=z2[flip,(P+1):(2*P)]
+z2[flip,(P+1):(2*P)]=z2[flip,1:P]
+z2[flip,1:P]=p2flip
+for(i in 1:(2*P)){
+	chains=z2[,i]
+	chains=sort(chains)
+	chains=round(chains,digits=2)
+	modes[i]=as.numeric(names(sort(table(chains),decreasing=TRUE))[1])
+	IntSize=round(length(chains)*(1-alpha))
+	interval=chains[c(1,IntSize)]
+	min=interval[2]-interval[1]
+	minPos=1
+	for(x in 2:(length(chains)-IntSize+1)){
+		interval=chains[c(x,(x-1)+IntSize)]
+		width=interval[2]-interval[1]
+		if(width<min){min=width;minPos=x}
+		}			
+	cred.intervals[i,]=chains[c(minPos,(minPos-1)+IntSize)]
+				}
+P1i=cred.intervals[1:P,]
+P2i=cred.intervals[(P+1):(2*P),]
+colnames(P1i)=c("Lower_Interval","Upper_Interval")
+colnames(P2i)=c("Lower_Interval","Upper_Interval")
+return(list(P1est=modes[1:P],P2est=modes[(P+1):(2*P)],P1interval=P1i,P2interval=P2i,Monitor=z1))
+}
+
+
 constrOptim2 <- function (theta, f, grad, ui, ci, mu = 1e-04, control = list(), 
     method = if (is.null(grad)) "Nelder-Mead" else "BFGS", outer.iterations = 100, 
     outer.eps = 1e-05, hessian=FALSE, ...) 
