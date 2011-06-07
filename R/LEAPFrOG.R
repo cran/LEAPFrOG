@@ -231,10 +231,10 @@ p2=p2[rowSums(p2)<P,]
 data2=data2[rowSums(p2)>0]
 p2=p2[rowSums(p2)>0,]
 nSNP=length(data2)
-fadmix="model {\nfor (i in 1:N){\nG[i]~dcat(probs[i,])\np1[i]<-sum(m1[1:(J-1)]*p[i,1:(J-1)])+(1-sum(m1[1:(J-1)]))*p[i,J]\np2[i]<-sum(m2[1:(J-1)]*p[i,1:(J-1)])+(1-sum(m2[1:(J-1)]))*p[i,J]\nprobs[i,1]<-(1-p1[i])*(1-p2[i])\nprobs[i,2]<-p1[i]*(1-p2[i])+p2[i]*(1-p1[i])\nprobs[i,3]<-p1[i]*p2[i]\n}\nfor(x in 1:J){\nalpha[x]<-prior\n}\nm1~ddirch(alpha)\nm2~ddirch(alpha)\n}\n" 
+fadmix="model {\nfor (i in 1:N){\nG[i]~dcat(probs[i,])\np1[i]<-sum(m1[1:(J-1)]*p[i,1:(J-1)])+(1-sum(m1[1:(J-1)]))*p[i,J]\np2[i]<-sum(m2[1:(J-1)]*p[i,1:(J-1)])+(1-sum(m2[1:(J-1)]))*p[i,J]\nprobs[i,1]<-(1-p1[i])*(1-p2[i])\nprobs[i,2]<-p1[i]*(1-p2[i])+p2[i]*(1-p1[i])\nprobs[i,3]<-p1[i]*p2[i]\nfor(j in 1:J){\np[i,j]~dnorm(pE[i,j],pT[i,j])T(0,1)\n}\n}\nfor(x in 1:J){\nalpha[x]<-prior\n}\nm1~ddirch(alpha)\nm2~ddirch(alpha)\n}\n" 
 write(fadmix,file="BEAPFrOG.bug")
 #jags model
-JagsModel <- jags.model('BEAPFrOG.bug',data = list('G'=data2+1,'N'=nSNP,'J'=P,'p'=p2,'prior'=prior),n.chains = nchains,n.adapt = burn)
+JagsModel <- jags.model('BEAPFrOG.bug',data = list('G'=data2+1,'N'=nSNP,'J'=P,'pE'=p2,'pT'=1/(p2*(1-p2)),'prior'=prior),n.chains = nchains,n.adapt = burn)
 z1=coda.samples(JagsModel,c('m1','m2'),iterations)
 #Process samples to get credible intervals
 cred.intervals=matrix(nrow=2*P,ncol=2)
