@@ -2,11 +2,7 @@ LEAPFrOG<-function(data,p,Nudge=0.001,NonLinCon=TRUE){
 	#Requires alabama and MASS packages
 #NonLinCon is optional and either TRUE or FALSE, and determines whether the nonlinear constraint on the sum of D*m (must be less than 1) will be employed. Default is TRUE
 #Nudge is an optional parameter which is useful for the odd occasions when the default starting parameters lead to impossible likelihoods. This is uncommon but will cause LEORAH to fall over. The starting value for parameter D1 is 0.5+Nudge. Values closer to the barrier (0.5) are more likely to be possible, but there could be issues with picking a value that is too close to the barrier (the gradient doesn't exist there). The default Nudge is 0.001. Nudge must be greater than 0 – if 0 is specified then the default will be used.
-	packageLoaded <- function(name) 0 != length(grep(paste("^package:", name,
-"$", sep=""), search())) #Stole this from https://stat.ethz.ch/pipermail/r-help/2005-September/078952.html
-if(!packageLoaded("alabama")) library(alabama)
-if(!packageLoaded("MASS")) library(MASS)
-P<<-dim(as.matrix(p))[2]	#Number of pops
+P<-dim(as.matrix(p))[2]	#Number of pops
 if(P<2) return(print("Error: LEORAH requires 2 or more reference populations"))
 if(length(data)!=dim(as.matrix(p))[1]) return("Error: Number of SNPs in data and reference frequencies is not the same")		
 	if(!(is.numeric(Nudge))) Nudge=0.001
@@ -93,7 +89,7 @@ D=m[P:length(m)]
 mins=vector(length=(2*P)-2);maxs=mins
 mins[1:(P-1)]=m
 mins[P]=D[1]-0.5
-if(P>2)mins[2:length(mins)]=D[2:(P-1)]
+if(P>2){mins[(P+1):length(mins)]=D[2:(P-1)]}
 maxs[1:(P-1)]=1-m
 maxs[P:length(mins)]=1-D
 maxs2=c(1-sum(m),0.5-(sum(D[m<=0.5]*m[m<=0.5])+sum(D[m>0.5]*(1-m[m>0.5]))+sum(m[m>0.5]-0.5)),0.5-(sum((1-D[m<=0.5])*m[m<=0.5])+sum((1-D[m>0.5])*(1-m[m>0.5]))+sum(m[m>0.5]-0.5)))
@@ -139,7 +135,7 @@ data2=data2[rowSums(p2)>0,]
 p2=p2[rowSums(p2)>0,]
 q2=1-p2
 nSNP=dim(data2)[1]
-nChr<<-nlevels(as.factor(chr))
+nChr<-nlevels(as.factor(chr))
 nSNP2<<-vector(length=nChr);y<<-c(1,rep(0.5,nChr-1))
 for(c in 1:nChr) nSNP2[c]=sum(chr==c)
 #Write the python function to file:
@@ -217,10 +213,7 @@ BEAPFrOG<-function(data,p,nchains=1,iterations=1000,alpha=0.05,prior=1,burn=2000
 	#alpha is 1-the width of the credible interval
 	#prior is the concentration parameter of the dirichlet prior. 1 is 'flat' and uninformative. Low values imply first generation admixture, but with no knowledge as to between which population if there are more than 2 populations. Therefore it is more informative (particularly when there are only 2 populations). Values greater than 1 imply even admixture between all populations in each parent, and are therefore informative.
 	#burn is the number of MCMC iterations to throw away
-	packageLoaded <- function(name) 0 != length(grep(paste("^package:", name,
-"$", sep=""), search())) #Stole this from https://stat.ethz.ch/pipermail/r-help/2005-September/078952.html
-if(!packageLoaded("rjags")) library(rjags)
-P<<-dim(as.matrix(p))[2]	#Number of pops
+P<-dim(as.matrix(p))[2]	#Number of pops
 if(P<2) return(print("Error: LEORAH requires 2 or more reference populations"))
 if(length(data)!=dim(as.matrix(p))[1]) return("Error: Number of SNPs in data and reference frequencies is not the same")		
 #Strip missing data or fixed SNPs from genotype and allele frequency matrix
